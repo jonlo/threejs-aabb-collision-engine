@@ -1,0 +1,28 @@
+{
+  "name": "threejs-aabb-collision-engine",
+  "version": "1.0.0",
+  "description": "This is an aabb collision engine for threejs",
+  "main": "src/CollisionEngine.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jonlo/threejs-aabb-collision-engine.git"
+  },
+  "keywords": [
+    "threejs",
+    "collsion",
+    "aabb",
+    "colliders"
+  ],
+  "author": "Jon Ldg",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jonlo/threejs-aabb-collision-engine/issues"
+  },
+  "homepage": "https://github.com/jonlo/threejs-aabb-collision-engine#readme",
+  "dependencies": {
+    "three": "^0.111.0"
+  }
+}
