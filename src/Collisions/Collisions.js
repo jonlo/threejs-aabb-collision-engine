@@ -1,5 +1,5 @@
 import { Group, Mesh } from 'three';
-import { getClosestDistanceBetweenObjects, checkIfObjectInsideObjectBounds } from '../Aabb/aabbOperations';
+import { getClosestDistanceBetweenObjects, checkIfObjectInsideObjectBounds, getClosestDistance } from '../Aabb/aabbOperations';
 import { isSameObject, tryToUpdateObject, updateBox } from './CollisionUpdates';
 import { TransformData } from '../Transforms/TransformData';
 
@@ -68,6 +68,7 @@ class Collisions {
 		}
 		tryToUpdateObject(selectedObject);
 		let closest = {
+			minDistance: NaN,
 			distances: [],
 			element: null
 		};
@@ -75,18 +76,20 @@ class Collisions {
 		meshCollidersAtSameLevel.forEach(collider => {
 			if (!isSameObject(selectedObject, collider)) {
 				tryToUpdateObject(collider);
-				let distances = { distanceX: 0, distanceY: 0, distanceZ: 0 };
+				let distances = [0, 0, 0];
 				distances = getClosestDistanceBetweenObjects(selectedObject, collider);
-				let distance = distances.distanceX + distances.distanceY + distances.distanceZ;
-				if (!closest.element || closest.distances.reduce((a, b) => a + b, 0) > distance) {
+				let minDistance = getClosestDistance(distances);
+				if (!closest.element || closest.minDistance > minDistance) {
+					closest.minDistance = minDistance;
 					closest.element = collider;
-					closest.distances[0] = distances.distanceX;
-					closest.distances[1] = distances.distanceY;
-					closest.distances[2] = distances.distanceZ;
+					closest.distances[0] = distances[0];
+					closest.distances[1] = distances[1];
+					closest.distances[2] = distances[2];
 				}
 			}
+			collider.material.color.set(0x0000ff);
 		});
-		// closest.element.material.color.set(0xff0000);
+		closest.element.material.color.set(0xff0000);
 		return closest;
 	}
 

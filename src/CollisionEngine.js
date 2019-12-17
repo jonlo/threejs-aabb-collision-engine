@@ -27,6 +27,7 @@ class CollisionEngine {
 		this.collisions = new Collisions();
 		this.realPosition = null;
 		this.collisionsEnabled = true;
+		this.snapToBounds = params.snapToBounds === undefined ? false : params.snapToBounds;
 		this.resetOnSnap = params.resetOnSnap === undefined ? true : params.resetOnSnap;
 		this.resetCallback = params.resetCallback === undefined ? null : params.resetCallback;
 	}
@@ -48,7 +49,7 @@ class CollisionEngine {
 			this.realPosition = object.position.clone();
 		}
 		let snapped = false;
-		if (this.snapDistance > 0) {
+		if (this.snapDistance > 0 && this.snapToBounds) {
 			snapped = snap(object, this.collisions.getClosestElement(object), axis, distance, this.snapDistance, (object, axis, value) => { this._onSnap(object, axis, value); }) === axis;
 		}
 		object.updateMatrixWorld();

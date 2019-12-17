@@ -10,11 +10,7 @@ export function getClosestDistanceBetweenObjects(selectedObject, collider) {
 	} else {
 		setDistancesBetweenObjects(selectedObject, collider, distances);
 	}
-	return {
-		distanceX: getClosestDistance(distances[0]),
-		distanceY: getClosestDistance(distances[1]),
-		distanceZ: getClosestDistance(distances[2])
-	};
+	return [getClosestDistance(distances[0]), getClosestDistance(distances[1]), getClosestDistance(distances[2])];
 }
 
 export function checkIfObjectInsideObjectBounds(object, parent) {
@@ -41,9 +37,9 @@ function setDistancesBetweenObjects(selectedElement, collider, distances) {
 			distances[axis].push(selectedPoints.min - colliderPoints.max);
 		}
 	}
-	// console.log(`dx: ${distances[0]}`);
-	// console.log(`dy: ${distances[1]}`);
-	// console.log(`dz: ${distances[2]}`);
+	console.log(`collider ${collider.name} dx: ${distances[0]}`);
+	console.log(`collider ${collider.name} dy: ${distances[1]}`);
+	console.log(`collider ${collider.name} dz: ${distances[2]}`);
 }
 
 export function getBoundsForElementInAxis(element, axis) {
@@ -72,8 +68,12 @@ export function getBoundsForElementInAxis(element, axis) {
 	}
 }
 
-function getClosestDistance(distances) {
-	return distances.reduce((prev, curr) => {
-		return (Math.abs(curr - 0) < Math.abs(prev - 0) ? curr : prev);
+export function getClosestDistance(distances) {
+	let minimunDistance = Math.max.apply(null, distances);
+	distances.forEach((elem) => {
+		if (elem >= 0 && elem < minimunDistance) {
+			minimunDistance = elem;
+		}
 	});
+	return minimunDistance;
 }
