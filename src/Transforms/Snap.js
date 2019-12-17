@@ -1,4 +1,4 @@
-import { getBoundsForElementInAxis } from '../Aabb/aabbOperations';
+import { getBoundsForObjectInAxis } from '../Aabb/aabbOperations';
 
 const SNAP_SCAPE = 0.3;
 const SNAP_MARGIN = 0.005;
@@ -6,16 +6,13 @@ const SNAP_BOUNDS = Object.freeze({ 'none': 0, 'snapXY': 1, 'snapXZ': 2, 'snapZY
 const lastDistance = [0, 0, 0];
 
 export function snap(selectedObject, closestObject, movingAxis, deltaMove, snapDistance, onSnapCallback, snapToBound = SNAP_BOUNDS.snapXY) {
-	if (!closestObject || closestObject.distances.length === 0) {
+	if (!closestObject || !closestObject.object ) {
 		return;
 	}
-	let distance = closestObject.distances.reduce(function (prev, curr) {
-		return (Math.abs(curr - 0) < Math.abs(prev - 0 && curr > 0) ? curr : prev);
-	});
-	let axis = closestObject.distances.indexOf(distance);
+	let distance = closestObject.distance;
+	let axis = closestObject.axis;
 	let dir = deltaMove < 0 ? -1 : 1;
-	let correctDistances = closestObject.distances.filter(d => d < snapDistance).length;
-	if (correctDistances > 2) {
+	if (distance < snapDistance) {
 		if (distance < lastDistance[movingAxis] && distance > SNAP_SCAPE) {
 			if (movingAxis === axis) {
 				onSnapCallback(selectedObject, axis, selectedObject.position.getComponent(axis) - (distance - SNAP_MARGIN) * dir);
@@ -28,13 +25,12 @@ export function snap(selectedObject, closestObject, movingAxis, deltaMove, snapD
 		} else {
 			lastDistance[movingAxis] = Math.abs(distance);
 		}
-
 	}
 }
 
 function snapToBounds(selectedObject, closestObject, axis, onSnapCallback) {
-	let selectedObjectPoints = getBoundsForElementInAxis(selectedObject, axis);
-	let closestObjectPoints = getBoundsForElementInAxis(closestObject.element, axis);
+	let selectedObjectPoints = getBoundsForObjectInAxis(selectedObject, axis);
+	let closestObjectPoints = getBoundsForObjectInAxis(closestObject.object, axis);
 	let minPointsDistance = selectedObjectPoints.min - closestObjectPoints.min;
 	let maxPointsDistance = selectedObjectPoints.max - closestObjectPoints.max;
 	if (Math.abs(minPointsDistance) < Math.abs(maxPointsDistance)) {

@@ -2,7 +2,7 @@ import { Box3 } from 'three';
 
 class TransformData {
 
-	constructor(element) {
+	constructor(object) {
 		this.margin = {
 			left: 0,
 			right: 0,
@@ -40,10 +40,10 @@ class TransformData {
 		this.colliders = [];
 		this.children = [];
 		this.ischild = false;
-		this.element = element;
+		this.object = object;
 		this.selectable = true;
 		this.parent = null;
-		this.element.userData.selectionIndex = element.userData.selectionIndex ? element.userData.selectionIndex : 0;
+		this.object.userData.selectionIndex = object.userData.selectionIndex ? object.userData.selectionIndex : 0;
 	}
 
 	setAsGroupChild() {
@@ -56,7 +56,7 @@ class TransformData {
 	addChild(child) {
 		child.userData.selectionIndex = -1;
 		this.children.push(child);
-		child.userData.transformData.parent = this.element;
+		child.userData.transformData.parent = this.object;
 	}
 
 	removeChild(child) {
@@ -73,7 +73,7 @@ class TransformData {
 
 	getParent() {
 		if (!this.parent) {
-			return this.element.parent;
+			return this.object.parent;
 		}
 		return this.parent;
 	}

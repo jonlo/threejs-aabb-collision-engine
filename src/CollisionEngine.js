@@ -50,7 +50,7 @@ class CollisionEngine {
 		}
 		let snapped = false;
 		if (this.snapDistance > 0 && this.snapToBounds) {
-			snapped = snap(object, this.collisions.getClosestElement(object), axis, distance, this.snapDistance, (object, axis, value) => { this._onSnap(object, axis, value); }) === axis;
+			snapped = snap(object, this.collisions.getClosestObject(object), axis, distance, this.snapDistance, (object, axis, value) => { this._onSnap(object, axis, value); }) === axis;
 		}
 		object.updateMatrixWorld();
 		if (!snapped) {

@@ -1,5 +1,5 @@
 import { Group, Mesh } from 'three';
-import { getClosestDistanceBetweenObjects, checkIfObjectInsideObjectBounds, getClosestDistance } from '../Aabb/aabbOperations';
+import { checkIfObjectInsideParentBounds, collidesInAxis, getDistanceBetweenObjectsInAxis } from '../Aabb/aabbOperations';
 import { isSameObject, tryToUpdateObject, updateBox } from './CollisionUpdates';
 import { TransformData } from '../Transforms/TransformData';
 
@@ -31,7 +31,7 @@ class Collisions {
 		} else if (collider.geometry) {
 			this.meshColliders.push(collider);
 		} else {
-			throw 'Only groups or elements with geometry should be added to the collision engine';
+			throw 'Only groups or objects with geometry should be added to the collision engine';
 		}
 	}
 
@@ -62,47 +62,63 @@ class Collisions {
 		return false;
 	}
 
-	getClosestElement(selectedObject) {
+	getClosestObject(selectedObject) {
 		if (!selectedObject) {
 			return;
 		}
 		tryToUpdateObject(selectedObject);
-		let closest = {
-			minDistance: NaN,
-			distances: [],
-			element: null
-		};
+		let closestObjects = [null, null, null];
+		for (let index = 0; index < 3; index++) {
+			closestObjects[index] = this._getClosestObjectInAxis(selectedObject, index);
+		}
+		closestObjects.sort(function (a, b) {
+			return a.distance - b.distance;
+		});
+		let closestObject = closestObjects[0];
+		if (!closestObject.object) { return null; }
+		return closestObject;
+	}
+
+
+	_getClosestObjectInAxis(selectedObject, axis) {
 		let meshCollidersAtSameLevel = this._getCollidersFromParent(selectedObject);
+		let closest = {
+			distance: Number.MAX_SAFE_INTEGER,
+			axis: axis,
+			object: null
+		};
 		meshCollidersAtSameLevel.forEach(collider => {
 			if (!isSameObject(selectedObject, collider)) {
 				tryToUpdateObject(collider);
-				let distances = [0, 0, 0];
-				distances = getClosestDistanceBetweenObjects(selectedObject, collider);
-				let minDistance = getClosestDistance(distances);
-				if (!closest.element || closest.minDistance > minDistance) {
-					closest.minDistance = minDistance;
-					closest.element = collider;
-					closest.distances[0] = distances[0];
-					closest.distances[1] = distances[1];
-					closest.distances[2] = distances[2];
+				let otherAxesCollides = [];
+				for (let index = 0; index < 3; index++) {
+					if (index !== axis) {
+						otherAxesCollides.push(collidesInAxis(selectedObject, collider, index));
+					}
+				}
+				if (otherAxesCollides.every(o => o === true)) {
+					let distance = getDistanceBetweenObjectsInAxis(selectedObject, collider, axis);
+					if (!closest.object || closest.distance > distance) {
+						closest.object = collider;
+						closest.distance = distance;
+					}
 				}
 			}
-			collider.material.color.set(0x0000ff);
 		});
-		closest.element.material.color.set(0xff0000);
+
 		return closest;
 	}
 
-	_getCollidersFromParent(element) {
-		if (!element) {
+	_getCollidersFromParent(object) {
+		if (!object) {
 			return;
 		}
-		let parent = element.userData.transformData.getParent();
+		let parent = object.userData.transformData.getParent();
 		if (!parent) {
-			element.userData.transformData.setParent(element.parent);
+			object.userData.transformData.setParent(object.parent);
 		}
-		return this.meshColliders.filter((element) => {
-			return element.userData.transformData.getParent().uuid === parent.uuid;
+		return this.meshColliders.filter((object) => {
+			return object.userData.transformData.getParent().uuid === parent.uuid;
 		});
 	}
 
@@ -115,12 +131,11 @@ class Collisions {
 		}
 		if (parent.userData.transformData) {
 			tryToUpdateObject(parent);
-			let objectInside = checkIfObjectInsideObjectBounds(selectedObject, parent);
+			let objectInside = checkIfObjectInsideParentBounds(selectedObject, parent);
 			return !objectInside;
 		}
 		return false;
 	}
-
 }
 
 export { Collisions };

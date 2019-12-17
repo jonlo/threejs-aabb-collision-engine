@@ -1,19 +1,7 @@
 import { Group, Vector3 } from 'three';
 
-export function getClosestDistanceBetweenObjects(selectedObject, collider) {
-	let distances = [[], [], []];
-	if (selectedObject instanceof Group) {
-		selectedObject.updateMatrixWorld();
-		selectedObject.userData.transformData.colliders.forEach((mesh) => {
-			setDistancesBetweenObjects(mesh, collider, distances);
-		});
-	} else {
-		setDistancesBetweenObjects(selectedObject, collider, distances);
-	}
-	return [getClosestDistance(distances[0]), getClosestDistance(distances[1]), getClosestDistance(distances[2])];
-}
 
-export function checkIfObjectInsideObjectBounds(object, parent) {
+export function checkIfObjectInsideParentBounds(object, parent) {
 	let objectBox = object.userData.transformData.box;
 	let parentBox = parent.userData.transformData.box;
 	for (let axis = 0; axis < 2; axis++) {
@@ -27,53 +15,46 @@ export function checkIfObjectInsideObjectBounds(object, parent) {
 	return true;
 }
 
-function setDistancesBetweenObjects(selectedElement, collider, distances) {
-	for (let axis = 0; axis < 3; axis++) {
-		let selectedPoints = getBoundsForElementInAxis(selectedElement, axis);
-		let colliderPoints = getBoundsForElementInAxis(collider, axis);
-		if (selectedPoints.max < colliderPoints.max) {
-			distances[axis].push(colliderPoints.min - selectedPoints.max);
-		} else {
-			distances[axis].push(selectedPoints.min - colliderPoints.max);
-		}
-	}
-	console.log(`collider ${collider.name} dx: ${distances[0]}`);
-	console.log(`collider ${collider.name} dy: ${distances[1]}`);
-	console.log(`collider ${collider.name} dz: ${distances[2]}`);
+export function collidesInAxis(object, collider, axis) {
+	let selectedBounds = getBoundsForObjectInAxis(object, axis);
+	let colliderBounds = getBoundsForObjectInAxis(collider, axis);
+	if ((selectedBounds.min >= colliderBounds.min && selectedBounds.min <= colliderBounds.max) || (selectedBounds.max >= colliderBounds.min && selectedBounds.max <= colliderBounds.max)
+		|| (colliderBounds.min >= selectedBounds.min && colliderBounds.min <= selectedBounds.max) || (colliderBounds.max >= selectedBounds.min && colliderBounds.max <= selectedBounds.max)) {
+		return true;
+	} else { return false; }
 }
 
-export function getBoundsForElementInAxis(element, axis) {
+export function getDistanceBetweenObjectsInAxis(object, collider, axis) {
+	let selectedPoints = getBoundsForObjectInAxis(object, axis);
+	let colliderPoints = getBoundsForObjectInAxis(collider, axis);
+	if (selectedPoints.max < colliderPoints.max) {
+		return colliderPoints.min - selectedPoints.max;
+	} else {
+		return selectedPoints.min - colliderPoints.max;
+	}
+}
 
-	if (element instanceof Group) {
-		element.updateMatrixWorld();
+export function getBoundsForObjectInAxis(object, axis) {
+	if (object instanceof Group) {
+		object.updateMatrixWorld();
 		let min = NaN;
 		let max = NaN;
-		element.userData.transformData.colliders.forEach((mesh) => {
+		object.userData.transformData.colliders.forEach((mesh) => {
 			let meshWorldPosh = new Vector3();
 			meshWorldPosh.setFromMatrixPosition(mesh.matrixWorld);
-			let elementWidth = (mesh.userData.transformData.box.max.getComponent(axis) - mesh.userData.transformData.box.min.getComponent(axis)) / 2;
-			let currentMax = meshWorldPosh.getComponent(axis) + elementWidth;
-			let currentMin = meshWorldPosh.getComponent(axis) - elementWidth;
+			let objectWidth = (mesh.userData.transformData.box.max.getComponent(axis) - mesh.userData.transformData.box.min.getComponent(axis)) / 2;
+			let currentMax = meshWorldPosh.getComponent(axis) + objectWidth;
+			let currentMin = meshWorldPosh.getComponent(axis) - objectWidth;
 			max = currentMax < max || !max ? currentMax : max;
 			min = currentMin < min || !min ? currentMin : min;
 		});
 		return { min, max };
 	} else {
-		let elementWorldPos = new Vector3();
-		elementWorldPos.setFromMatrixPosition(element.matrixWorld);
-		let elementWidth = (element.userData.transformData.box.max.getComponent(axis) - element.userData.transformData.box.min.getComponent(axis)) / 2;
-		let max = elementWorldPos.getComponent(axis) + elementWidth;
-		let min = elementWorldPos.getComponent(axis) - elementWidth;
+		let objectWorldPos = new Vector3();
+		objectWorldPos.setFromMatrixPosition(object.matrixWorld);
+		let objectWidth = (object.userData.transformData.box.max.getComponent(axis) - object.userData.transformData.box.min.getComponent(axis)) / 2;
+		let max = objectWorldPos.getComponent(axis) + objectWidth;
+		let min = objectWorldPos.getComponent(axis) - objectWidth;
 		return { min, max };
 	}
-}
-
-export function getClosestDistance(distances) {
-	let minimunDistance = Math.max.apply(null, distances);
-	distances.forEach((elem) => {
-		if (elem >= 0 && elem < minimunDistance) {
-			minimunDistance = elem;
-		}
-	});
-	return minimunDistance;
 }
