@@ -6,7 +6,7 @@ const SNAP_BOUNDS = Object.freeze({ 'none': 0, 'snapXY': 1, 'snapXZ': 2, 'snapZY
 const lastDistance = [0, 0, 0];
 
 export function snap(selectedObject, closestObject, movingAxis, deltaMove, snapDistance, onSnapCallback, snapToBound = SNAP_BOUNDS.snapXY) {
-	if (!closestObject || !closestObject.object ) {
+	if (!closestObject || !closestObject.object) {
 		return;
 	}
 	let distance = closestObject.distance;
@@ -15,9 +15,12 @@ export function snap(selectedObject, closestObject, movingAxis, deltaMove, snapD
 	if (distance < snapDistance) {
 		if (distance < lastDistance[movingAxis] && distance > SNAP_SCAPE) {
 			if (movingAxis === axis) {
-				onSnapCallback(selectedObject, axis, selectedObject.position.getComponent(axis) - (distance - SNAP_MARGIN) * dir);
 				if (snapToBound !== SNAP_BOUNDS.none) {
-					snapToBounds(selectedObject, closestObject, getAxisForSnapBound(axis, snapToBound), onSnapCallback);
+					if (snapToBounds(selectedObject, closestObject, snapDistance, getAxisForSnapBound(axis, snapToBound), onSnapCallback)) {
+						onSnapCallback(selectedObject, axis, selectedObject.position.getComponent(axis) - (distance - SNAP_MARGIN) * dir);
+					}
+				} else {
+					onSnapCallback(selectedObject, axis, selectedObject.position.getComponent(axis) - (distance - SNAP_MARGIN) * dir);
 				}
 				lastDistance[movingAxis] = 0;
 				return movingAxis;
@@ -28,16 +31,21 @@ export function snap(selectedObject, closestObject, movingAxis, deltaMove, snapD
 	}
 }
 
-function snapToBounds(selectedObject, closestObject, axis, onSnapCallback) {
+function snapToBounds(selectedObject, closestObject, snapDistance, axis, onSnapCallback) {
 	let selectedObjectPoints = getBoundsForObjectInAxis(selectedObject, axis);
 	let closestObjectPoints = getBoundsForObjectInAxis(closestObject.object, axis);
 	let minPointsDistance = selectedObjectPoints.min - closestObjectPoints.min;
 	let maxPointsDistance = selectedObjectPoints.max - closestObjectPoints.max;
-	if (Math.abs(minPointsDistance) < Math.abs(maxPointsDistance)) {
-		onSnapCallback(selectedObject, axis, selectedObject.position.getComponent(axis) - minPointsDistance);
-	} else {
-		onSnapCallback(selectedObject, axis, selectedObject.position.getComponent(axis) - maxPointsDistance);
+	let minDistance = Math.min(Math.abs(minPointsDistance), Math.abs(maxPointsDistance));
+	if (minDistance < snapDistance) {
+		if (Math.abs(minPointsDistance) < Math.abs(maxPointsDistance)) {
+			onSnapCallback(selectedObject, axis, selectedObject.position.getComponent(axis) - minPointsDistance);
+		} else {
+			onSnapCallback(selectedObject, axis, selectedObject.position.getComponent(axis) - maxPointsDistance);
+		}
+		return true;
 	}
+	return false;
 }
 
 function getAxisForSnapBound(axis, snapToBound) {

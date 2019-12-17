@@ -6,10 +6,10 @@
  * @version 1
  **/
 import { Vector3 } from 'three';
-import { Collisions } from './Collisions/Collisions';
-import { restrict } from './Transforms/Restrictions';
-import { snap } from './Transforms/Snap';
-import { TransformData } from './Transforms/TransformData.js';
+import { Collisions } from './src/Collisions/Collisions';
+import { restrict } from './src/Transforms/Restrictions';
+import { snap } from './src/Transforms/Snap';
+import { TransformData } from './src/Transforms/TransformData.js';
 
 /**
  * Creates an instance of CollisionEngine.
