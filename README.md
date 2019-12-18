@@ -24,6 +24,11 @@ this.collisionEngine.translate(this.selectedCube, 0, deltaMove.x);
 this.collisionEngine.translate(this.selectedCube, 1, deltaMove.y);
 ```
 
+## Demo project
+
+You can see a demo project on :
+
+[Test scene](https://github.com/jonlo/threejs-aabb-collision-engine-TestScene)
 
 
 ## Functions
@@ -46,6 +51,7 @@ params = {trackAfterCollision,snapDistance,resetOnSnap,resetCallback}</p>
 		- [simple aabb collision engine for threejs](#simple-aabb-collision-engine-for-threejs)
 	- [Quick Start](#quick-start)
 		- [On mouse move](#on-mouse-move)
+	- [Demo project](#demo-project)
 	- [Functions](#functions)
 	- [CollisionEngine](#collisionengine)
 		- [collisionEngine.translate(object, axis, distance)](#collisionenginetranslateobject-axis-distance)

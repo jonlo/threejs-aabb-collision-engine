@@ -1,8 +1,8 @@
 {
   "name": "threejs-aabb-collision-engine",
-  "version": "1.0.1",
+  "version": "1.0.8",
   "description": "This is an aabb collision engine for threejs",
-  "main": "src/CollisionEngine.js",
+  "main": "CollisionEngine.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
