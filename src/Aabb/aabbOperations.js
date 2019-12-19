@@ -35,7 +35,6 @@ export function getDistanceBetweenObjectsInAxis(object, collider, axis) {
 }
 
 export function getBoundsForObjectInAxis(object, axis) {
-
 	let objectWorldPos = new Vector3();
 	objectWorldPos.setFromMatrixPosition(object.matrixWorld);
 	let objectWidth = (object.userData.transformData.box.max.getComponent(axis) - object.userData.transformData.box.min.getComponent(axis)) / 2;
