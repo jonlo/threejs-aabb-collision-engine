@@ -107,7 +107,7 @@ class CollisionEngine {
 			return;
 		}
 		if (!object.userData.transformData) {
-			object.userData.transformData = new TransformData();
+			object.userData.transformData = new TransformData(object);
 		}
 	}
 

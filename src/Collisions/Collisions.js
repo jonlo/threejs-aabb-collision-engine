@@ -13,7 +13,7 @@ class Collisions {
 		updateBox(collider);
 	}
 
-	addCollider(collider) {
+	addCollider(collider, rootParent) {
 		if (!collider.userData.transformData) {
 			collider.userData.transformData = new TransformData(collider);
 		}
@@ -21,7 +21,7 @@ class Collisions {
 			collider.traverse((mesh) => {
 				if ((mesh instanceof Mesh)) {
 					if (!mesh.userData.transformData) {
-						mesh.userData.transformData = new TransformData(collider);
+						mesh.userData.transformData = new TransformData(collider,rootParent);
 						mesh.userData.transformData.setAsGroupChild();
 					}
 					this.meshColliders.push(mesh);

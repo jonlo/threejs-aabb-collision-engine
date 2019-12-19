@@ -1,4 +1,4 @@
-import { Box3 } from 'three';
+import { Box3, Group, Scene } from 'three';
 
 class TransformData {
 
@@ -43,6 +43,7 @@ class TransformData {
 		this.object = object;
 		this.selectable = true;
 		this.parent = null;
+		this.rootParent = this._getRootParent(object);
 		this.object.userData.selectionIndex = object.userData.selectionIndex ? object.userData.selectionIndex : 0;
 	}
 
@@ -92,6 +93,22 @@ class TransformData {
 
 	isChild() {
 		return this.parent !== null;
+	}
+
+	_getRootParent(selectedObject) {
+		if (selectedObject && selectedObject.parent && !(selectedObject.parent instanceof Scene)) {
+			let parent = selectedObject.parent;
+			let root = false;
+			while (!root && parent instanceof Group) {
+				if (parent.parent instanceof Group) {
+					parent = parent.parent;
+				} else {
+					root = true;
+				}
+			}
+			return parent;
+		}
+		return selectedObject;
 	}
 
 }
