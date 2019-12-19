@@ -1,5 +1,3 @@
-import { Group } from 'three';
-
 export function isSameObject(parent, son) {
 	if (parent === son)
 		return true;
@@ -30,11 +28,5 @@ export function tryToUpdateObject(collisionObj) {
 }
 
 export function updateBox(collider) {
-	if (collider instanceof Group) {
-		collider.userData.transformData.colliders.forEach((mesh) => {
-			updateCollider(mesh);
-		});
-	} else {
-		updateCollider(collider);
-	}
+	updateCollider(collider);
 }

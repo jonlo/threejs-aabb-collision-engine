@@ -116,7 +116,7 @@ class CollisionEngine {
 		object.position.setComponent(axis, value);
 		let deltaMove = this.realPosition.getComponent(axis) - object.position.getComponent(axis);
 		this._translateChildren(object, axis, deltaMove, -1);
-		if (this.resetOnSnap) {
+		if (this.resetOnSnap && this.resetCallback) {
 			this.resetCallback();
 		}
 	}

@@ -1,6 +1,6 @@
 import { getBoundsForObjectInAxis } from '../Aabb/aabbOperations';
 
-const SNAP_SCAPE = 0.3;
+const SNAP_SCAPE = 0.03;
 const SNAP_MARGIN = 0.005;
 const SNAP_BOUNDS = Object.freeze({ 'none': 0, 'snapXY': 1, 'snapXZ': 2, 'snapZY': 3 });
 const lastDistance = [0, 0, 0];

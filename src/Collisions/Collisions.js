@@ -1,4 +1,4 @@
-import { Group, Mesh } from 'three';
+import { Mesh } from 'three';
 import { checkIfObjectInsideParentBounds, collidesInAxis, getDistanceBetweenObjectsInAxis } from '../Aabb/aabbOperations';
 import { isSameObject, tryToUpdateObject, updateBox } from './CollisionUpdates';
 import { TransformData } from '../Transforms/TransformData';
@@ -13,26 +13,11 @@ class Collisions {
 		updateBox(collider);
 	}
 
-	addCollider(collider, rootParent) {
+	addCollider(collider) {
 		if (!collider.userData.transformData) {
 			collider.userData.transformData = new TransformData(collider);
 		}
-		if (collider instanceof Group) {
-			collider.traverse((mesh) => {
-				if ((mesh instanceof Mesh)) {
-					if (!mesh.userData.transformData) {
-						mesh.userData.transformData = new TransformData(collider,rootParent);
-						mesh.userData.transformData.setAsGroupChild();
-					}
-					this.meshColliders.push(mesh);
-					collider.userData.transformData.colliders.push(mesh);
-				}
-			});
-		} else if (collider.geometry) {
-			this.meshColliders.push(collider);
-		} else {
-			throw 'Only groups or objects with geometry should be added to the collision engine';
-		}
+		this.meshColliders.push(collider);
 	}
 
 	checkCollisions(selectedObject) {
@@ -47,13 +32,7 @@ class Collisions {
 				continue;
 			}
 			tryToUpdateObject(collisionObj);
-			if (selectedObject instanceof Group) {
-				for (let j = 0; j < selectedObject.userData.transformData.colliders.length; j++) {
-					if (selectedObject.userData.transformData.colliders[j].userData.transformData.box.intersectsBox(collisionObj.userData.transformData.box)) {
-						return true;
-					}
-				}
-			} else {
+			if (!selectedObject.geometry) {
 				if (selectedObject.userData.transformData.box.intersectsBox(collisionObj.userData.transformData.box)) {
 					return true;
 				}
@@ -115,7 +94,7 @@ class Collisions {
 		}
 		let parent = object.userData.transformData.getParent();
 		if (!parent) {
-			object.userData.transformData.setParent(object.parent);
+			object.userData.transformData.parent = object.parent;
 		}
 		return this.meshColliders.filter((object) => {
 			return object.userData.transformData.getParent().uuid === parent.uuid;
