@@ -1,4 +1,3 @@
-import { Mesh } from 'three';
 import { checkIfObjectInsideParentBounds, collidesInAxis, getDistanceBetweenObjectsInAxis } from '../Aabb/aabbOperations';
 import { isSameObject, tryToUpdateObject, updateBox } from './CollisionUpdates';
 import { TransformData } from '../Transforms/TransformData';
@@ -18,6 +17,7 @@ class Collisions {
 			collider.userData.transformData = new TransformData(collider);
 		}
 		this.meshColliders.push(collider);
+		updateBox(collider);
 	}
 
 	checkCollisions(selectedObject) {
@@ -32,11 +32,10 @@ class Collisions {
 				continue;
 			}
 			tryToUpdateObject(collisionObj);
-			if (!selectedObject.geometry) {
-				if (selectedObject.userData.transformData.box.intersectsBox(collisionObj.userData.transformData.box)) {
-					return true;
-				}
+			if (selectedObject.userData.transformData.box.intersectsBox(collisionObj.userData.transformData.box)) {
+				return true;
 			}
+			
 		}
 		return false;
 	}

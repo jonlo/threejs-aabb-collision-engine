@@ -4,11 +4,13 @@ import { Vector3 } from 'three';
 export function checkIfObjectInsideParentBounds(object, parent) {
 	let objectBox = object.userData.transformData.box;
 	let parentBox = parent.userData.transformData.box;
-	for (let axis = 0; axis < 2; axis++) {
-		if ((object.position.getComponent(axis) - (objectBox.max.getComponent(axis) - objectBox.min.getComponent(axis)) / 2)
+	let objectWorldPos = new Vector3();
+	objectWorldPos.setFromMatrixPosition(object.matrixWorld);
+	for (let axis = 0; axis < 3; axis++) {
+		if ((objectWorldPos.getComponent(axis) - (objectBox.max.getComponent(axis) - objectBox.min.getComponent(axis)) / 2)
 			< (parent.position.getComponent(axis) - (parentBox.max.getComponent(axis) - parentBox.min.getComponent(axis)) / 2 + Object.values(parent.userData.transformData.padding)[axis]) ||
-			(object.position.getComponent(axis) + (objectBox.max.getComponent(axis) - objectBox.min.getComponent(axis)) / 2)
-			> (parent.position.getComponent(axis) + (parentBox.max.getComponent(axis) - parentBox.min.getComponent(axis)) / 2 - Object.values(parent.userData.transformData.padding)[axis + 1])) {
+			(objectWorldPos.getComponent(axis) + (objectBox.max.getComponent(axis) - objectBox.min.getComponent(axis)) / 2)
+			> (parent.position.getComponent(axis) + (parentBox.max.getComponent(axis) - parentBox.min.getComponent(axis)) / 2 - Object.values(parent.userData.transformData.padding)[axis])) {
 			return false;
 		}
 	}

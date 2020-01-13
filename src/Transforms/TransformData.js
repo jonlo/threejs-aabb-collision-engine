@@ -1,4 +1,4 @@
-import { Box3, Group, Scene } from 'three';
+import { Box3 } from 'three';
 
 class TransformData {
 
