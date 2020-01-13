@@ -1,6 +1,6 @@
 {
   "name": "threejs-aabb-collision-engine",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "This is an aabb collision engine for threejs",
   "main": "CollisionEngine.js",
   "scripts": {

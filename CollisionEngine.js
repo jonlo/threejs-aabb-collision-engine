@@ -55,14 +55,14 @@ class CollisionEngine {
 		object.updateMatrixWorld();
 		if (!snapped) {
 			object.position.setComponent(axis, object.position.getComponent(axis) + distance);
-			this._translateChildren(object, axis, distance, -1);
+			// this._translateChildren(object, axis, distance, -1);
 			object.updateMatrixWorld();
 			this.realPosition.setComponent(axis, this.realPosition.getComponent(axis) + distance);
 		}
 		if (this.collisionsEnabled) {
 			if (this.collisions.checkCollisions(object)) {
 				object.position.setComponent(axis, object.position.getComponent(axis) - distance);
-				this._translateChildren(object, axis, distance, 1);
+				// this._translateChildren(object, axis, distance, 1);
 				this.collisions.updateCollisionBox(object);
 				if (this.trackAfterCollision) {
 					this._tryToRelocateObject(object, axis);
@@ -114,19 +114,25 @@ class CollisionEngine {
 	_onSnap(object, axis, value) {
 		if (!this.realPosition) { return; }
 		object.position.setComponent(axis, value);
-		let deltaMove = this.realPosition.getComponent(axis) - object.position.getComponent(axis);
-		this._translateChildren(object, axis, deltaMove, -1);
+		// let deltaMove = this.realPosition.getComponent(axis) - object.position.getComponent(axis);
+		// this._translateChildren(object, axis, deltaMove, -1);
 		if (this.resetOnSnap && this.resetCallback) {
 			this.resetCallback();
 		}
-	}
 
-	_translateChildren(object, axis, deltaMove, dir) {
+	}
+	_updateChildren(object) {
 		object.userData.transformData.getChildren().forEach(child => {
-			child.position.setComponent(axis, child.position.getComponent(axis) + deltaMove * dir);
 			this.collisions.updateCollisionBox(child);
 		});
 	}
+
+	// _translateChildren(object, axis, deltaMove, dir) {
+	// 	object.userData.transformData.getChildren().forEach(child => {
+	// 		child.position.setComponent(axis, child.position.getComponent(axis) - deltaMove * dir);
+	// 		this.collisions.updateCollisionBox(child);
+	// 	});
+	// }
 
 	_tryToRelocateObject(object, axis) {
 		let currentPos = new Vector3().copy(object.position);
@@ -137,8 +143,8 @@ class CollisionEngine {
 			object.updateMatrixWorld();
 			this.collisions.updateCollisionBox(object);
 		} else {
-			let deltaMove = this.realPosition.getComponent(axis) - currentPos.getComponent(axis);
-			this._translateChildren(object, axis, deltaMove, 1);
+			// let deltaMove = this.realPosition.getComponent(axis) - currentPos.getComponent(axis);
+			// this._translateChildren(object, axis, deltaMove, 1);
 		}
 	}
 }

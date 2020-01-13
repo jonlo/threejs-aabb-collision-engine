@@ -15,6 +15,9 @@ export function isSameObject(parent, son) {
 }
 
 export function updateCollider(collider) {
+	for (let child of collider.userData.transformData.getChildren()) {
+		updateCollider(child);
+	}
 	let margin = collider.userData.transformData.margin;
 	collider.userData.transformData.setBox(collider);
 	collider.userData.transformData.box.min.set(collider.userData.transformData.box.min.x - margin.left, collider.userData.transformData.box.min.y - margin.bottom, collider.userData.transformData.box.min.z - margin.front);
