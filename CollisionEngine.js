@@ -54,14 +54,14 @@ class CollisionEngine {
 		}
 		object.updateMatrixWorld();
 		if (!snapped) {
-			object.position.setComponent(axis, object.position.getComponent(axis) - distance);
+			object.position.setComponent(axis, object.position.getComponent(axis) + distance);
 			this._translateChildren(object, axis, distance, -1);
 			object.updateMatrixWorld();
-			this.realPosition.setComponent(axis, this.realPosition.getComponent(axis) - distance);
+			this.realPosition.setComponent(axis, this.realPosition.getComponent(axis) + distance);
 		}
 		if (this.collisionsEnabled) {
 			if (this.collisions.checkCollisions(object)) {
-				object.position.setComponent(axis, object.position.getComponent(axis) + distance);
+				object.position.setComponent(axis, object.position.getComponent(axis) - distance);
 				this._translateChildren(object, axis, distance, 1);
 				this.collisions.updateCollisionBox(object);
 				if (this.trackAfterCollision) {
