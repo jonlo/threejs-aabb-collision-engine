@@ -14,16 +14,6 @@ export function isSameObject(parent, son) {
 	return false;
 }
 
-export function updateCollider(collider) {
-	for (let child of collider.userData.transformData.getChildren()) {
-		updateCollider(child);
-	}
-	let margin = collider.userData.transformData.margin;
-	collider.userData.transformData.setBox(collider);
-	collider.userData.transformData.box.min.set(collider.userData.transformData.box.min.x - margin.left, collider.userData.transformData.box.min.y - margin.bottom, collider.userData.transformData.box.min.z - margin.front);
-	collider.userData.transformData.box.max.set(collider.userData.transformData.box.max.x + margin.right, collider.userData.transformData.box.max.y + margin.top, collider.userData.transformData.box.max.z + margin.back);
-}
-
 export function tryToUpdateObject(collisionObj) {
 	if (collisionObj && (!collisionObj.userData.transformData || !collisionObj.userData.transformData.box)) {
 		updateBox(collisionObj);
@@ -31,5 +21,11 @@ export function tryToUpdateObject(collisionObj) {
 }
 
 export function updateBox(collider) {
-	updateCollider(collider);
+	for (let child of collider.userData.transformData.getChildren()) {
+		updateBox(child);
+	}
+	let margin = collider.userData.transformData.margin;
+	collider.userData.transformData.setBox(collider);
+	collider.userData.transformData.box.min.set(collider.userData.transformData.box.min.x - margin.left, collider.userData.transformData.box.min.y - margin.bottom, collider.userData.transformData.box.min.z - margin.front);
+	collider.userData.transformData.box.max.set(collider.userData.transformData.box.max.x + margin.right, collider.userData.transformData.box.max.y + margin.top, collider.userData.transformData.box.max.z + margin.back);
 }

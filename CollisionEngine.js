@@ -84,6 +84,11 @@ class CollisionEngine {
 		this.collisions.addCollider(collider);
 	}
 
+	removeCollider(collider) {
+		this.collisions.removeCollider(collider);
+	}
+
+
 	/**
 	 *Get all colliders in the system
 	 *

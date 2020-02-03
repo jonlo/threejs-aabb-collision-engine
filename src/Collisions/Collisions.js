@@ -20,6 +20,13 @@ class Collisions {
 		updateBox(collider);
 	}
 
+	removeCollider(collider) {
+		var index = this.meshColliders.indexOf(collider);
+		if (index > -1) {
+			this.meshColliders.splice(index, 1);
+		}
+	}
+
 	checkCollisions(selectedObject) {
 		if (this._checkCollisionWithParentBounds(selectedObject)) {
 			return true;
@@ -35,7 +42,7 @@ class Collisions {
 			if (selectedObject.userData.transformData.box.intersectsBox(collisionObj.userData.transformData.box)) {
 				return true;
 			}
-			
+
 		}
 		return false;
 	}
