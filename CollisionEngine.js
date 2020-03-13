@@ -82,6 +82,7 @@ class CollisionEngine {
 	 */
 	addCollider(collider) {
 		this.collisions.addCollider(collider);
+		this.collisions.updateCollisionBox(collider);
 	}
 
 	removeCollider(collider) {
