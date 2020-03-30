@@ -47,6 +47,10 @@ class Collisions {
 		return false;
 	}
 
+	clearMeshColliders() {
+		this.meshColliders = [];
+	}
+
 	getClosestObject(selectedObject) {
 		if (!selectedObject) {
 			return;

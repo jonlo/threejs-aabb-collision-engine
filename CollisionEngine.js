@@ -85,10 +85,24 @@ class CollisionEngine {
 		this.collisions.updateCollisionBox(collider);
 	}
 
+	/**
+	 * removes a  collider from the system
+	 *
+	 * @param {Object3D} collider
+	 * @memberof CollisionEngine
+	 */
 	removeCollider(collider) {
 		this.collisions.removeCollider(collider);
 	}
 
+	/**
+		 * clear all colliders list
+		 *
+		 * @memberof CollisionEngine
+		 */
+	clearCollisionEngine() {
+		this.collisions.clearMeshColliders();
+	}
 
 	/**
 	 *Get all colliders in the system
